@@ -2,6 +2,7 @@ export interface FoodItem {
   id: string;
   name: string;
   emoji: string;
+  imageUrl?: string;
   rating: number; // 1 to 10
   category?: string;
   isCustom?: boolean;

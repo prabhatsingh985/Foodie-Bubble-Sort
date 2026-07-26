@@ -19,7 +19,23 @@ export const FoodSelector: React.FC<FoodSelectorProps> = ({ onStartSorting }) =>
   const [customName, setCustomName] = useState('');
   const [customEmoji, setCustomEmoji] = useState('🍕');
   const [customRating, setCustomRating] = useState(5);
+  const [customImage, setCustomImage] = useState<string | null>(null);
   const [showAddCustom, setShowAddCustom] = useState(false);
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Please select an image smaller than 5MB!');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setCustomImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const toggleSelectPreset = (food: FoodItem) => {
     const exists = selectedDishes.some((d) => d.id === food.id);
@@ -55,11 +71,13 @@ export const FoodSelector: React.FC<FoodSelectorProps> = ({ onStartSorting }) =>
       id: `custom-${Date.now()}`,
       name: customName.trim(),
       emoji: customEmoji || '🍱',
+      imageUrl: customImage || undefined,
       rating: customRating,
       isCustom: true,
     };
     setSelectedDishes([...selectedDishes, newFood]);
     setCustomName('');
+    setCustomImage(null);
     setShowAddCustom(false);
   };
 
@@ -181,12 +199,46 @@ export const FoodSelector: React.FC<FoodSelectorProps> = ({ onStartSorting }) =>
             />
             <input
               type="text"
-              placeholder="Dish Name (e.g. Mango Lassi)"
+              placeholder="Dish Name (e.g. Rajma Chawal)"
               value={customName}
               onChange={(e) => setCustomName(e.target.value)}
               style={{ flex: 1, minWidth: '160px', padding: '8px 12px', borderRadius: '8px', border: '1px solid #CCC', fontSize: '15px' }}
               required
             />
+
+            {/* Custom Photo Upload Input */}
+            <label
+              style={{
+                background: '#FFF',
+                border: '2px solid #4ECDC4',
+                borderRadius: '8px',
+                padding: '6px 12px',
+                cursor: 'pointer',
+                fontSize: '13px',
+                fontWeight: 600,
+                color: '#319795',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+              }}
+            >
+              📷 {customImage ? 'Photo Attached ✓' : 'Upload Photo'}
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                style={{ display: 'none' }}
+              />
+            </label>
+
+            {customImage && (
+              <img
+                src={customImage}
+                alt="Preview"
+                style={{ width: '36px', height: '36px', borderRadius: '8px', objectFit: 'cover', border: '2px solid #4ECDC4' }}
+              />
+            )}
+
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <span style={{ fontSize: '14px', fontWeight: 600, color: '#555' }}>Score:</span>
               <input
@@ -313,7 +365,11 @@ export const FoodSelector: React.FC<FoodSelectorProps> = ({ onStartSorting }) =>
             >
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <span style={{ fontSize: '32px' }}>{dish.emoji}</span>
+                  {dish.imageUrl ? (
+                    <img src={dish.imageUrl} alt={dish.name} style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '10px', border: '2px solid #FF6B6B' }} />
+                  ) : (
+                    <span style={{ fontSize: '32px' }}>{dish.emoji}</span>
+                  )}
                   <div>
                     <div style={{ fontFamily: "'Fredoka', cursive, sans-serif", fontSize: '16px', color: '#2D3748' }}>
                       {dish.name}

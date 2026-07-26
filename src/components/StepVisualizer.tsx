@@ -302,8 +302,12 @@ export const StepVisualizer: React.FC<StepVisualizerProps> = ({
                     </div>
                   )}
 
-                  {/* Food Emoji */}
-                  <div style={{ fontSize: '34px', marginBottom: '4px' }}>{dish.emoji}</div>
+                  {/* Food Emoji or Photo */}
+                  {dish.imageUrl ? (
+                    <img src={dish.imageUrl} alt={dish.name} style={{ width: '38px', height: '38px', objectFit: 'cover', borderRadius: '10px', marginBottom: '4px' }} />
+                  ) : (
+                    <div style={{ fontSize: '34px', marginBottom: '4px' }}>{dish.emoji}</div>
+                  )}
 
                   {/* Food Name */}
                   <div

@@ -148,7 +148,11 @@ export const CompletionCelebration: React.FC<CompletionCelebrationProps> = ({
                 boxSizing: 'border-box',
               }}
             >
-              <div style={{ fontSize: '36px', marginBottom: '4px' }}>{dish.emoji}</div>
+              {dish.imageUrl ? (
+                <img src={dish.imageUrl} alt={dish.name} style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '10px', marginBottom: '4px' }} />
+              ) : (
+                <div style={{ fontSize: '36px', marginBottom: '4px' }}>{dish.emoji}</div>
+              )}
               <div
                 style={{
                   fontFamily: "'Fredoka', cursive, sans-serif",
