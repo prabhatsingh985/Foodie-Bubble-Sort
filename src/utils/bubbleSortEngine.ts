@@ -12,15 +12,15 @@ export function generateBubbleSortSteps(initialDishes: FoodItem[]): SortStep[] {
   const getDishLabel = (dish: FoodItem) =>
     dish.imageUrl ? dish.name : `${dish.emoji || ''} ${dish.name}`.trim();
 
-  // Step #0: Initial Intro Story Step
+  // Step #0: Initial Intro Story Step with Natural Kid Language (No confusing "permanent lock" jargon)
   steps.push({
     stepIndex: 0,
     passNumber: 1,
     dishes: items.map((d) => ({ ...d })),
     comparedIndices: null,
     swapped: false,
-    explanation: `🎉 Chalo Magic Food Party Shuru Karein! 🍽️✨\n\nAaj humari table par bohot saari tasty dishes rakhi hain! Par ek choti si problem hai—saare khane aage-peeche mix ho gaye hain!\n\n👑 Humara Magic Mission:\nHum sabse kam stars waala khana pehle rakhenge, aur sabse ZYADA tasty khana (${getDishLabel(highestDish)} - ${highestDish.rating}⭐) sabse LAST me rakhenge taaki use party ke end me maze se khayein!\n\n🪄 Hum Game Kaise Khelengi? (3 Magic Rules):\n\n1. 🤝 Do Haath Rule: Hum ek baar me sirf 2 paas-paas waali neighbor plates check karenge!\n2. 👉 Zyada Star Waala Right Me: Agar Left hand waale khane me zyada Stars ⭐ hain, toh use Right side bhej denge!\n3. 🏆 Winner Trophy: Jab ek poore round me EK BHI plate hilani nahi padegi (matlab saara khana set ho gaya!), tab hum Game WIN kar jaayenge! 🎉`,
-    detailedReason: `Game Kaise Khelna Hai?\n\n- Rule 1: Step-by-step 2 neighbor plates ko compare karo.\n- Rule 2: Agar Left plate zyada tasty hai, toh "Jagah Badal Do! 🔄" dabao.\n- Rule 3: Jab sabhi dishes Smallest Star se Biggest Star tak set ho jaayengi, tab game win! 🎉`,
+    explanation: `🎉 Chalo Magic Food Party Shuru Karein! 🍽️✨\n\nAaj humari table par ${n} tasty dishes rakhi hain! Par saare khane aage-peeche mix hain!\n\n🔁 "Loops (Rounds)" Kaise Chalenge?\n• Loop / Pass = Table par Left se Right tak 1 poori walk!\n• Round 1: Sabse bada khana (${getDishLabel(highestDish)}) Last Seat par Sahi Set 🎯 ho jaayega! (Ab ise dubara hilana nahi padega!)\n• Round 2: 2nd sabse bada khana apni Sahi Seat 🪑 par set hoga!\n• Round 3, 4...: Baaki dishes 1-by-1 apni sahi seat par set hoti jaayengi!\n• Total Rounds: ${n} dishes hain, toh max ${n - 1} Rounds (Plates - 1) chalenge!\n\n🪄 3 Magic Rules:\n1. 🤝 Do Haath Rule: Ek baar me sirf 2 neighbor plates check karenge!\n2. 👉 Bada Khana Right Me: Left hand waala khana zyada tasty hoga toh Right me slide kar denge!\n3. 🏆 Winner Trophy: Jab ek poore round me EK BHI plate hilani nahi padegi (matlab saara khana set ho gaya!), tab Game WIN! 🎉`,
+    detailedReason: `Loop (Round) Kaise Kaam Karta Hai?\n\n1. LOOP = Table par Left se Right tak ki 1 Round Walk!\n2. SAHI SEAT PAR SET 🎯 = Dish apni VIP Final Seat par baith gayi hai! Ab ise dubara check nahi karna!\n3. ROUNDS FLOW:\n   - Round 1 ➔ Last seat par sabse bada khana set 🎯\n   - Round 2 ➔ 2nd last seat par khana set 🎯\n   - Round 3, 4... ➔ Agli seats par khana set 🎯\n4. TOTAL ROUNDS = Max ${n - 1} Rounds me saari ${n} plates 100% set ho jaati hain!`,
     lockedIndices: [],
     isPassComplete: false,
     isFullySorted: false,
@@ -50,7 +50,7 @@ export function generateBubbleSortSteps(initialDishes: FoodItem[]): SortStep[] {
           dishes: items.map((d) => ({ ...d })), // Array BEFORE swap
           comparedIndices: [j, j + 1],
           swapped: false,
-          explanation: `👀 Haath 1 aur Haath 2 me dekho!\n\n• Left Haath (Hand 1): ${leftLabel} (${origLeft.rating} ⭐)\n• Right Haath (Hand 2): ${rightLabel} (${origRight.rating} ⭐)\n\n🤔 Pata Karo: Tumhein ${leftLabel} (${origLeft.rating} ⭐) ${rightLabel} (${origRight.rating} ⭐) se ZYADA TASTY lagta hai!\n\n💡 Faisla: Kyunki ${leftLabel} tumhein zyada tasty lagta hai, isiliye isko Right side me hona chahiye! Niche red button "Jagah Badal Do! 🔄" dabao!`,
+          explanation: `👀 Haath 1 aur Haath 2 me dekho! (Round #${passNumber})\n\n• Left Haath (Hand 1): ${leftLabel} (${origLeft.rating} ⭐)\n• Right Haath (Hand 2): ${rightLabel} (${origRight.rating} ⭐)\n\n🤔 Pata Karo: Tumhein ${leftLabel} (${origLeft.rating} ⭐) ${rightLabel} (${origRight.rating} ⭐) se ZYADA TASTY lagta hai!\n\n💡 Faisla: Kyunki ${leftLabel} tumhein zyada tasty lagta hai, isiliye isko Right side me hona chahiye! Niche red button "Jagah Badal Do! 🔄" dabao!`,
           detailedReason: `Kyu jagah badalni hai?\n\n1. Hand 1 par ${leftLabel} (${origLeft.rating}⭐) hai aur Hand 2 par ${rightLabel} (${origRight.rating}⭐) hai.\n2. ${leftLabel} tumhein zyada tasty lagta hai, isiliye isko Right side me slide hona chahiye.\n3. Niche "Jagah Badal Do! 🔄" button dabao!`,
           lockedIndices: [...lockedIndices],
           isPassComplete: false,
@@ -68,16 +68,17 @@ export function generateBubbleSortSteps(initialDishes: FoodItem[]): SortStep[] {
         passSwapsCount++;
 
         stepIndex++;
+        const isThisPassLastCompare = j === n - i - 2;
         steps.push({
           stepIndex,
           passNumber,
           dishes: items.map((d) => ({ ...d })), // Array AFTER swap
           comparedIndices: [j, j + 1],
           swapped: true,
-          explanation: `🎉 WOHOO! Magic Swap Ho Gaya! 🪄\n\nDekho! ${leftLabel} (${origLeft.rating} ⭐ - zyada tasty khana) slid karke Right side par chala gaya aur ${rightLabel} (${origRight.rating} ⭐) Left side par aa gaya!\n\nAb agle 2 neighbors dekhne ke liye green button "Agla Neighbor Dekho! 🚀" dabao!`,
-          detailedReason: `Kya hua abhi?\n\n1. Both plates successfully switched places on the dining table!\n2. Now ${leftLabel} (${origLeft.rating}⭐) is safely on the Right side.\n3. Click "Agla Neighbor Dekho! 🚀" to check the next 2 neighbors!`,
+          explanation: `🎉 WOHOO! Magic Swap Ho Gaya! 🪄\n\nDekho! ${leftLabel} (${origLeft.rating} ⭐ - zyada tasty khana) slid karke Right side par chala gaya aur ${rightLabel} (${origRight.rating} ⭐) Left side par aa gaya!${isThisPassLastCompare ? `\n\n🎯 Round #${passNumber} Finish! Seat #${n - i} par ${leftLabel} Sahi Set 🎯 ho gaya!` : ''}\n\nAb agle neighbors dekhne ke liye green button "Agla Neighbor Dekho! 🚀" dabao!`,
+          detailedReason: `Kya hua abhi?\n\n1. Both plates successfully switched places on the dining table!\n2. Now ${leftLabel} (${origLeft.rating}⭐) is safely on the Right side.\n3. Click "Agla Neighbor Dekho! 🚀" to check the next neighbors!`,
           lockedIndices: [...lockedIndices],
-          isPassComplete: j === n - i - 2,
+          isPassComplete: isThisPassLastCompare,
           isFullySorted: false,
           passSwapsCount,
           actionType: 'swapped',
@@ -85,16 +86,17 @@ export function generateBubbleSortSteps(initialDishes: FoodItem[]): SortStep[] {
         });
       } else {
         // Keep Places step
+        const isThisPassLastCompare = j === n - i - 2;
         steps.push({
           stepIndex,
           passNumber,
           dishes: items.map((d) => ({ ...d })), // Array unchanged
           comparedIndices: [j, j + 1],
           swapped: false,
-          explanation: `👍 Yay! Yeh Toh Pehle Se Sahi Hai!\n\n• Left Haath (Hand 1): ${leftLabel} (${origLeft.rating} ⭐)\n• Right Haath (Hand 2): ${rightLabel} (${origRight.rating} ⭐)\n\n🌟 ${rightLabel} (${origRight.rating} ⭐) tumhein pehle se hi ZYADA TASTY lagta hai, aur wo Right side par hi baitha hai! Isiliye inhe bilkul mat chhedo!\n\nGreen button "Agla Neighbor Dekho! 🚀" dabakar aage badho!`,
+          explanation: `👍 Yay! Yeh Toh Pehle Se Sahi Hai! (Round #${passNumber})\n\n• Left Haath (Hand 1): ${leftLabel} (${origLeft.rating} ⭐)\n• Right Haath (Hand 2): ${rightLabel} (${origRight.rating} ⭐)\n\n🌟 ${rightLabel} (${origRight.rating} ⭐) tumhein pehle se hi ZYADA TASTY lagta hai, aur wo Right side par hi baitha hai! Isiliye inhe bilkul mat chhedo!${isThisPassLastCompare ? `\n\n🎯 Round #${passNumber} Finish! Seat #${n - i} par ${rightLabel} Sahi Set 🎯 ho gaya!` : ''}\n\nGreen button "Agla Neighbor Dekho! 🚀" dabakar aage badho!`,
           detailedReason: `Kyu jagah nahi badli?\n\n1. Hand 2 (Right) waala ${rightLabel} (${origRight.rating}⭐) tumhein pehle se hi zyada tasty lagta hai.\n2. Wo pehle se hi Right side par sahi jagah par hai.\n3. Isiliye hum inhe bilkul nahi chhedenge!`,
           lockedIndices: [...lockedIndices],
-          isPassComplete: j === n - i - 2,
+          isPassComplete: isThisPassLastCompare,
           isFullySorted: false,
           passSwapsCount,
           actionType: 'compare-keep',
@@ -121,7 +123,7 @@ export function generateBubbleSortSteps(initialDishes: FoodItem[]): SortStep[] {
         dishes: items.map((d) => ({ ...d })),
         comparedIndices: null,
         swapped: false,
-        explanation: `🎉 WOHOO! Round ${passNumber} me humne poori table dekhi aur ek bhi plate badalni nahi padi! Iska matlab saara khana PERFECTLY SET ho gaya hai!`,
+        explanation: `🎉 WOHOO! Round #${passNumber} me humne poori table dekhi aur EK BHI plate hilani nahi padi! Iska matlab saari dishes 100% PERFECTLY SET ho gayi hain!`,
         detailedReason: `Kaise pata chala ki game finish ho gaya?\n\nJab hum poori table walk karte hain aur 0 plates badalni padti hain, tab saari dishes 100% sorted ho jaati hain!`,
         lockedIndices: Array.from({ length: n }, (_, idx) => idx),
         isPassComplete: true,
