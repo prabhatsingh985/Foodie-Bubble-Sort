@@ -189,40 +189,33 @@ export const FoodSelector: React.FC<FoodSelectorProps> = ({ onStartSorting }) =>
               alignItems: 'center',
             }}
           >
-            <input
-              type="text"
-              placeholder="Dish Emoji (e.g. 🍕)"
-              value={customEmoji}
-              onChange={(e) => setCustomEmoji(e.target.value)}
-              style={{ width: '60px', padding: '8px', borderRadius: '8px', border: '1px solid #CCC', fontSize: '20px', textAlign: 'center' }}
-              maxLength={2}
-            />
-            <input
-              type="text"
-              placeholder="Dish Name (e.g. Rajma Chawal)"
-              value={customName}
-              onChange={(e) => setCustomName(e.target.value)}
-              style={{ flex: 1, minWidth: '160px', padding: '8px 12px', borderRadius: '8px', border: '1px solid #CCC', fontSize: '15px' }}
-              required
-            />
-
-            {/* Custom Photo Upload Input */}
+            {/* Custom Photo Upload Input (Far Left) */}
             <label
               style={{
-                background: '#FFF',
+                background: customImage ? '#E6FFFA' : '#FFF',
                 border: '2px solid #4ECDC4',
-                borderRadius: '8px',
-                padding: '6px 12px',
+                borderRadius: '10px',
+                padding: '8px 14px',
                 cursor: 'pointer',
-                fontSize: '13px',
+                fontSize: '14px',
                 fontWeight: 600,
                 color: '#319795',
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '6px',
+                gap: '8px',
+                boxShadow: '0 2px 6px rgba(78, 205, 196, 0.15)',
               }}
             >
-              📷 {customImage ? 'Photo Attached ✓' : 'Upload Photo'}
+              {customImage ? (
+                <img
+                  src={customImage}
+                  alt="Preview"
+                  style={{ width: '28px', height: '28px', borderRadius: '6px', objectFit: 'cover' }}
+                />
+              ) : (
+                <span style={{ fontSize: '18px' }}>📷</span>
+              )}
+              {customImage ? 'Photo Attached ✓' : 'Upload Photo'}
               <input
                 type="file"
                 accept="image/*"
@@ -231,13 +224,15 @@ export const FoodSelector: React.FC<FoodSelectorProps> = ({ onStartSorting }) =>
               />
             </label>
 
-            {customImage && (
-              <img
-                src={customImage}
-                alt="Preview"
-                style={{ width: '36px', height: '36px', borderRadius: '8px', objectFit: 'cover', border: '2px solid #4ECDC4' }}
-              />
-            )}
+            {/* Dish Name Input */}
+            <input
+              type="text"
+              placeholder="Dish Name (e.g. Rajma Chawal)"
+              value={customName}
+              onChange={(e) => setCustomName(e.target.value)}
+              style={{ flex: 1, minWidth: '160px', padding: '10px 14px', borderRadius: '10px', border: '2px solid #E2E8F0', fontSize: '15px' }}
+              required
+            />
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <span style={{ fontSize: '14px', fontWeight: 600, color: '#555' }}>Score:</span>
