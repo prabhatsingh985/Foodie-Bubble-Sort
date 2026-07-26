@@ -302,9 +302,29 @@ export const StepVisualizer: React.FC<StepVisualizerProps> = ({
                     </div>
                   )}
 
-                  {/* Food Emoji or Photo */}
+                  {/* Food Emoji, Photo, or Custom Color Badge */}
                   {dish.imageUrl ? (
                     <img src={dish.imageUrl} alt={dish.name} style={{ width: '38px', height: '38px', objectFit: 'cover', borderRadius: '10px', marginBottom: '4px' }} />
+                  ) : dish.isCustom ? (
+                    <div
+                      style={{
+                        width: '38px',
+                        height: '38px',
+                        borderRadius: '50%',
+                        background: dish.color || '#FF6B6B',
+                        color: '#FFF',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontFamily: "'Fredoka', cursive, sans-serif",
+                        fontSize: '18px',
+                        fontWeight: 700,
+                        marginBottom: '4px',
+                        boxShadow: '0 4px 10px rgba(0,0,0,0.15)',
+                      }}
+                    >
+                      {dish.name.charAt(0).toUpperCase()}
+                    </div>
                   ) : (
                     <div style={{ fontSize: '34px', marginBottom: '4px' }}>{dish.emoji}</div>
                   )}
@@ -385,10 +405,10 @@ export const StepVisualizer: React.FC<StepVisualizerProps> = ({
           }}
         >
           {currentStepIndex === 0 ? (
-            <>📖 The Foodie Story: Why Left-to-Right & Right Swapping?</>
+            <>📖 Food Party Ki Kahani! 🥳</>
           ) : (
             <>
-              <Award size={22} /> What is happening at this step?
+              <Award size={22} /> Dekho Abhi Kya Ho Raha Hai! 👇
             </>
           )}
         </div>

@@ -150,6 +150,26 @@ export const CompletionCelebration: React.FC<CompletionCelebrationProps> = ({
             >
               {dish.imageUrl ? (
                 <img src={dish.imageUrl} alt={dish.name} style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '10px', marginBottom: '4px' }} />
+              ) : dish.isCustom ? (
+                <div
+                  style={{
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '50%',
+                    background: dish.color || '#FF6B6B',
+                    color: '#FFF',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontFamily: "'Fredoka', cursive, sans-serif",
+                    fontSize: '18px',
+                    fontWeight: 700,
+                    marginBottom: '4px',
+                    boxShadow: '0 4px 10px rgba(0,0,0,0.15)',
+                  }}
+                >
+                  {dish.name.charAt(0).toUpperCase()}
+                </div>
               ) : (
                 <div style={{ fontSize: '36px', marginBottom: '4px' }}>{dish.emoji}</div>
               )}

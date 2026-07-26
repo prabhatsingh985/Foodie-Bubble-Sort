@@ -73,7 +73,7 @@ export const ExplainModal: React.FC<ExplainModalProps> = ({ step, onClose }) => 
               margin: 0,
             }}
           >
-            Why did this step happen? 🤔
+            Yeh Step Kyu Hua? 🤔
           </h3>
         </div>
 
@@ -115,13 +115,13 @@ export const ExplainModal: React.FC<ExplainModalProps> = ({ step, onClose }) => 
               marginBottom: '10px',
             }}
           >
-            <Lightbulb size={20} /> 3 Easy Game Rules:
+            <Lightbulb size={20} /> 3 Magic Kids Rules:
           </div>
 
           <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '15px', color: '#4A5568', lineHeight: 1.6 }}>
-            <li><strong>🤝 Sirf 2 Neighbors:</strong> Hum beech se random plate nahi uthate! Hamesha 2 side-by-side neighbors check karte hain!</li>
-            <li><strong>🍨 Yummy Slide:</strong> Hand 1 (Left) par zyada tasty food hoga toh wo Right side me move ho jayega!</li>
-            <li><strong>🛑 Finish Line:</strong> Jab ek poori round me 0 plates badalni padengi (0 changes), tab game finish!</li>
+            <li><strong>🤝 Do Haath Rule:</strong> Hum ek time par sirf 2 paas-paas waali neighbor plates check karte hain!</li>
+            <li><strong>👉 Bada Khana Right Me:</strong> Hand 1 (Left) par zyada tasty food hoga toh wo Right side slide ho jaayega!</li>
+            <li><strong>🏆 Winner Trophy:</strong> Jab ek poore round me EK BHI plate hilani nahi padegi (matlab saare khane set hain!), tab Game WIN! 🎉</li>
           </ul>
         </div>
 

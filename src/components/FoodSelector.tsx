@@ -60,6 +60,19 @@ export const FoodSelector: React.FC<FoodSelectorProps> = ({ onStartSorting }) =>
     );
   };
 
+  const PASTEL_COLORS = [
+    '#FF6B6B',
+    '#4ECDC4',
+    '#FFD166',
+    '#118AB2',
+    '#06D6A0',
+    '#9B5DE5',
+    '#F15BB5',
+    '#ED8936',
+    '#38B2AC',
+    '#9F7AEA',
+  ];
+
   const handleAddCustomFood = (e: React.FormEvent) => {
     e.preventDefault();
     if (!customName.trim()) return;
@@ -67,11 +80,13 @@ export const FoodSelector: React.FC<FoodSelectorProps> = ({ onStartSorting }) =>
       alert('Max 6 food items allowed!');
       return;
     }
+    const randomColor = PASTEL_COLORS[Math.floor(Math.random() * PASTEL_COLORS.length)];
     const newFood: FoodItem = {
       id: `custom-${Date.now()}`,
       name: customName.trim(),
-      emoji: customEmoji || '🍱',
+      emoji: '',
       imageUrl: customImage || undefined,
+      color: randomColor,
       rating: customRating,
       isCustom: true,
     };
@@ -362,6 +377,25 @@ export const FoodSelector: React.FC<FoodSelectorProps> = ({ onStartSorting }) =>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   {dish.imageUrl ? (
                     <img src={dish.imageUrl} alt={dish.name} style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '10px', border: '2px solid #FF6B6B' }} />
+                  ) : dish.isCustom ? (
+                    <div
+                      style={{
+                        width: '40px',
+                        height: '40px',
+                        borderRadius: '50%',
+                        background: dish.color || '#FF6B6B',
+                        color: '#FFF',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontFamily: "'Fredoka', cursive, sans-serif",
+                        fontSize: '18px',
+                        fontWeight: 700,
+                        boxShadow: '0 4px 10px rgba(0,0,0,0.15)',
+                      }}
+                    >
+                      {dish.name.charAt(0).toUpperCase()}
+                    </div>
                   ) : (
                     <span style={{ fontSize: '32px' }}>{dish.emoji}</span>
                   )}

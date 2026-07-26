@@ -3,6 +3,7 @@ export interface FoodItem {
   name: string;
   emoji: string;
   imageUrl?: string;
+  color?: string;
   rating: number; // 1 to 10
   category?: string;
   isCustom?: boolean;
