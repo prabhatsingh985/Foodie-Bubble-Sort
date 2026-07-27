@@ -9,10 +9,13 @@ export const BubbleSortKidsApp: React.FC = () => {
   const [appState, setAppState] = useState<'selection' | 'guided' | 'celebration'>('selection');
   const [selectedDishes, setSelectedDishes] = useState<FoodItem[]>([]);
   const [sortSteps, setSortSteps] = useState<SortStep[]>([]);
+  const [userName, setUserName] = useState<string>('Rohan');
 
-  const handleStartSorting = (dishes: FoodItem[]) => {
+  const handleStartSorting = (dishes: FoodItem[], name: string) => {
+    const finalName = name.trim() || 'Rohan';
+    setUserName(finalName);
     setSelectedDishes(dishes);
-    const steps = generateBubbleSortSteps(dishes);
+    const steps = generateBubbleSortSteps(dishes, finalName);
     setSortSteps(steps);
     setAppState('guided');
   };
@@ -44,6 +47,7 @@ export const BubbleSortKidsApp: React.FC = () => {
       {appState === 'guided' && (
         <StepVisualizer
           steps={sortSteps}
+          userName={userName}
           onComplete={handleVisualizerComplete}
           onReset={handleReset}
         />

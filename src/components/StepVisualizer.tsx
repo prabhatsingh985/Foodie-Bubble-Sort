@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import type { SortStep, FoodItem } from '../types/bubbleSort';
 import { ExplainModal } from './ExplainModal';
+import { RoundCompleteModal } from './RoundCompleteModal';
 import {
   Play,
   Pause,
@@ -16,28 +17,41 @@ import {
 
 interface StepVisualizerProps {
   steps: SortStep[];
+  userName?: string;
   onComplete: () => void;
   onReset: () => void;
 }
 
 export const StepVisualizer: React.FC<StepVisualizerProps> = ({
   steps,
+  userName = 'Rohan',
   onComplete,
   onReset,
 }) => {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [activeDialogueIndex, setActiveDialogueIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [speed, setSpeed] = useState(2000); // 2 seconds per step
   const [showExplainModal, setShowExplainModal] = useState(false);
+  const [showRoundModal, setShowRoundModal] = useState(false);
 
   const currentStep = steps[currentStepIndex];
+
+  useEffect(() => {
+    setActiveDialogueIndex(0);
+  }, [currentStepIndex]);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (isPlaying) {
       if (currentStepIndex < steps.length - 1) {
         timer = setTimeout(() => {
-          setCurrentStepIndex((prev) => prev + 1);
+          if (currentStep.isPassComplete && !currentStep.isFullySorted) {
+            setIsPlaying(false);
+            setShowRoundModal(true);
+          } else {
+            setCurrentStepIndex((prev) => prev + 1);
+          }
         }, speed);
       } else {
         setIsPlaying(false);
@@ -45,13 +59,27 @@ export const StepVisualizer: React.FC<StepVisualizerProps> = ({
       }
     }
     return () => clearTimeout(timer);
-  }, [isPlaying, currentStepIndex, steps.length, speed, onComplete]);
+  }, [isPlaying, currentStepIndex, steps.length, speed, onComplete, currentStep]);
 
   const handleNextStep = () => {
+    if (currentStep.isPassComplete && !currentStep.isFullySorted) {
+      setShowRoundModal(true);
+      return;
+    }
     if (currentStepIndex < steps.length - 1) {
       setCurrentStepIndex((prev) => prev + 1);
     } else {
       onComplete();
+    }
+  };
+
+  const handleContinueRoundModal = () => {
+    setShowRoundModal(false);
+    const maxPasses = currentStep.dishes.length - 1;
+    if (currentStep.passNumber >= maxPasses || currentStepIndex >= steps.length - 1) {
+      onComplete();
+    } else {
+      setCurrentStepIndex((prev) => prev + 1);
     }
   };
 
@@ -150,18 +178,48 @@ export const StepVisualizer: React.FC<StepVisualizerProps> = ({
       >
         <div
           style={{
-            textAlign: 'center',
-            fontFamily: "'Fredoka', cursive, sans-serif",
-            fontSize: '20px',
-            color: '#DD6B20',
-            marginBottom: '32px',
             display: 'flex',
+            flexDirection: 'column',
             alignItems: 'center',
-            justifyContent: 'center',
             gap: '8px',
+            marginBottom: '32px',
           }}
         >
-          🍽️ The Dining Table (Arranging Left ➔ Right)
+          <div
+            style={{
+              textAlign: 'center',
+              fontFamily: "'Fredoka', cursive, sans-serif",
+              fontSize: '20px',
+              color: '#DD6B20',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+            }}
+          >
+            🍽️ The Dining Table (Arranging Left ➔ Right)
+          </div>
+
+          <div
+            style={{
+              background: '#FFF5F5',
+              border: '2px dashed #FEB2B2',
+              borderRadius: '20px',
+              padding: '6px 16px',
+              fontSize: '14px',
+              fontFamily: "'Fredoka', cursive, sans-serif",
+              color: '#C53030',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
+            }}
+          >
+            <span>💻 <strong>Food Array</strong> = [ {currentStep.dishes.map((d) => (d.imageUrl ? d.name : `${d.emoji || ''} ${d.name}`.trim())).join(', ')} ]</span>
+            <span style={{ color: '#DD6B20' }}>• 🪑 <strong>Indices</strong> = (0 to {currentStep.dishes.length - 1})</span>
+          </div>
         </div>
 
         {/* Plates Grid */}
@@ -366,6 +424,30 @@ export const StepVisualizer: React.FC<StepVisualizerProps> = ({
                   </div>
                 </div>
 
+                {/* Seat Index Badge (Computer Array Index) */}
+                <div
+                  style={{
+                    background: isCompared
+                      ? '#319795'
+                      : isLocked
+                      ? '#D69E2E'
+                      : '#ED8936',
+                    color: '#FFFFFF',
+                    fontSize: '12px',
+                    fontFamily: "'Fredoka', cursive, sans-serif",
+                    fontWeight: 700,
+                    padding: '3px 10px',
+                    borderRadius: '12px',
+                    marginTop: '8px',
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.12)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                  }}
+                >
+                  🪑 Index {idx}
+                </div>
+
                 {/* Plate Base */}
                 <div
                   style={{
@@ -382,7 +464,7 @@ export const StepVisualizer: React.FC<StepVisualizerProps> = ({
         </div>
       </div>
 
-      {/* Explanation Story Card */}
+      {/* 2-Character Interactive Cartoon Q&A Dialogue Card */}
       <div
         style={{
           background: '#FFFFFF',
@@ -397,49 +479,207 @@ export const StepVisualizer: React.FC<StepVisualizerProps> = ({
           style={{
             fontFamily: "'Fredoka', cursive, sans-serif",
             fontSize: '20px',
-            color: currentStepIndex === 0 ? '#DD6B20' : '#319795',
-            marginBottom: '12px',
+            color: '#DD6B20',
+            marginBottom: '20px',
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
           }}
         >
           {currentStepIndex === 0 ? (
-            <>📖 Food Party Ki Kahani! 🥳</>
+            <>💬 Kids Q&A Story: {userName} 👦 aur Master Chef 👨‍🍳 Ki Baatein! 🥳</>
           ) : (
             <>
-              <Award size={22} /> Dekho Abhi Kya Ho Raha Hai! 👇
+              <Award size={22} /> 💬 Kids Q&A: Dekho {userName} Kya Pooch Raha Hai! 👇
             </>
           )}
         </div>
 
-        <div
-          style={{
-            fontFamily: "'Outfit', sans-serif",
-            fontSize: '18px',
-            lineHeight: 1.6,
-            color: '#2D3748',
-            margin: '0 0 20px 0',
-            whiteSpace: 'pre-line',
-          }}
-        >
-          {currentStep.explanation}
-        </div>
+        {currentStep.dialogues && currentStep.dialogues.length > 0 ? (
+          (() => {
+            const totalDialogues = currentStep.dialogues.length;
+            const safeIndex = Math.min(activeDialogueIndex, totalDialogues - 1);
+            const currentDialogue = currentStep.dialogues[safeIndex];
 
-        {/* Action Controls & Kid Comprehension Checkpoint */}
-        <div
-          style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: '12px',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            background: '#F7FAFC',
-            padding: '16px',
-            borderRadius: '16px',
-            border: '2px dashed #CBD5E0',
-          }}
-        >
+            return (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                
+                {/* Header Badge for Multi-Q&A Progress */}
+                {totalDialogues > 1 && (
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justify: 'space-between',
+                      gap: '12px',
+                      background: '#F7FAFC',
+                      border: '1px solid #E2E8F0',
+                      padding: '8px 16px',
+                      borderRadius: '20px',
+                      fontSize: '14px',
+                      color: '#4A5568',
+                      fontFamily: "'Fredoka', cursive, sans-serif",
+                    }}
+                  >
+                    <span>💬 Baatcheet: Sawal #{safeIndex + 1} of {totalDialogues}</span>
+                    <span>{userName} 👦 ➔ Master Chef 👨‍🍳</span>
+                  </div>
+                )}
+
+                {/* Single Q&A Pair Card */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                  
+                  {/* LEFT CHARACTER: Kid Learner Question */}
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px' }}>
+                    <img
+                      src="/avatars/boy.png"
+                      alt={`${userName} Avatar`}
+                      style={{
+                        width: '54px',
+                        height: '54px',
+                        borderRadius: '50%',
+                        border: '3px solid #4ECDC4',
+                        boxShadow: '0 4px 10px rgba(78, 205, 196, 0.3)',
+                        flexShrink: 0,
+                      }}
+                    />
+                    <div
+                      style={{
+                        background: '#E6FFFA',
+                        border: '2px solid #81E6D9',
+                        borderRadius: '20px 20px 20px 4px',
+                        padding: '14px 18px',
+                        color: '#234E52',
+                        fontFamily: "'Outfit', sans-serif",
+                        fontSize: '16px',
+                        lineHeight: 1.5,
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
+                        maxWidth: '85%',
+                      }}
+                    >
+                      <div style={{ fontWeight: 700, fontSize: '13px', color: '#2B6CB0', marginBottom: '4px' }}>
+                        👦 {userName} (Sawal):
+                      </div>
+                      {currentDialogue.question}
+                    </div>
+                  </div>
+
+                  {/* RIGHT CHARACTER: Chef Master 👨‍🍳 (Mentor Answer) */}
+                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'flex-end', gap: '14px' }}>
+                    <div
+                      style={{
+                        background: '#FEFCBF',
+                        border: '2px solid #F6E05E',
+                        borderRadius: '20px 20px 4px 20px',
+                        padding: '14px 18px',
+                        color: '#744210',
+                        fontFamily: "'Outfit', sans-serif",
+                        fontSize: '16px',
+                        lineHeight: 1.5,
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
+                        maxWidth: '85%',
+                      }}
+                    >
+                      <div style={{ fontWeight: 700, fontSize: '13px', color: '#D69E2E', marginBottom: '4px' }}>
+                        👨‍🍳 Master Chef (Jawab):
+                      </div>
+                      {currentDialogue.answer}
+                    </div>
+                    <img
+                      src="/avatars/chef.png"
+                      alt="Chef Mentor Avatar"
+                      style={{
+                        width: '54px',
+                        height: '54px',
+                        borderRadius: '50%',
+                        border: '3px solid #FFD166',
+                        boxShadow: '0 4px 10px rgba(255, 209, 102, 0.4)',
+                        flexShrink: 0,
+                      }}
+                    />
+                  </div>
+
+                </div>
+
+                {/* Sub-controls for navigating 1-by-1 Q&As */}
+                {totalDialogues > 1 && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '10px', marginTop: '10px' }}>
+                    <button
+                      onClick={() => setActiveDialogueIndex((prev) => Math.max(0, prev - 1))}
+                      disabled={safeIndex === 0}
+                      style={{
+                        background: safeIndex === 0 ? '#EDF2F7' : '#E2E8F0',
+                        color: safeIndex === 0 ? '#A0AEC0' : '#2D3748',
+                        border: 'none',
+                        borderRadius: '12px',
+                        padding: '10px 16px',
+                        fontFamily: "'Fredoka', cursive, sans-serif",
+                        fontSize: '14px',
+                        cursor: safeIndex === 0 ? 'not-allowed' : 'pointer',
+                      }}
+                    >
+                      👈 Pehla Sawal
+                    </button>
+
+                    {safeIndex < totalDialogues - 1 ? (
+                      <button
+                        onClick={() => setActiveDialogueIndex((prev) => Math.min(totalDialogues - 1, prev + 1))}
+                        style={{
+                          background: 'linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%)',
+                          color: '#FFF',
+                          border: 'none',
+                          borderRadius: '12px',
+                          padding: '10px 20px',
+                          fontFamily: "'Fredoka', cursive, sans-serif",
+                          fontSize: '15px',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          boxShadow: '0 4px 12px rgba(255, 107, 107, 0.3)',
+                        }}
+                      >
+                        Agle Sawal Par Chalo 🤔 ➔
+                      </button>
+                    ) : (
+                      <div style={{ fontSize: '14px', color: '#38A169', fontFamily: "'Fredoka', cursive, sans-serif", fontWeight: 700 }}>
+                        🎉 Sabhi Sawal Poore Ho Gaye! Game Shuru Karo! 🚀
+                      </div>
+                    )}
+                  </div>
+                )}
+
+              </div>
+            );
+          })()
+        ) : (
+          <div
+            style={{
+              fontFamily: "'Outfit', sans-serif",
+              fontSize: '18px',
+              lineHeight: 1.6,
+              color: '#2D3748',
+              margin: '0 0 20px 0',
+              whiteSpace: 'pre-line',
+            }}
+          >
+            {currentStep.explanation}
+          </div>
+        )}
+      </div>
+
+      {/* Action Controls & Kid Comprehension Checkpoint */}
+      <div
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '12px',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          background: '#F7FAFC',
+          padding: '16px',
+          borderRadius: '16px',
+          border: '2px dashed #CBD5E0',
+        }}
+      >
           {/* Back Step */}
           <button
             onClick={handlePrevStep}
@@ -517,13 +757,30 @@ export const StepVisualizer: React.FC<StepVisualizerProps> = ({
             <ChevronRight size={20} />
           </button>
         </div>
-      </div>
 
       {/* Modal for "Explain Again" */}
       {showExplainModal && (
         <ExplainModal
           step={currentStep}
           onClose={() => setShowExplainModal(false)}
+        />
+      )}
+
+      {/* Modal for Round Completion Milestone */}
+      {showRoundModal && (
+        <RoundCompleteModal
+          passNumber={currentStep.passNumber}
+          lockedDishName={
+            currentStep.dishes[currentStep.dishes.length - currentStep.passNumber]?.imageUrl
+              ? currentStep.dishes[currentStep.dishes.length - currentStep.passNumber].name
+              : `${currentStep.dishes[currentStep.dishes.length - currentStep.passNumber]?.emoji || ''} ${currentStep.dishes[currentStep.dishes.length - currentStep.passNumber]?.name || ''}`.trim()
+          }
+          lockedDishRating={
+            currentStep.dishes[currentStep.dishes.length - currentStep.passNumber]?.rating || 10
+          }
+          totalDishes={currentStep.dishes.length}
+          userName={userName}
+          onContinue={handleContinueRoundModal}
         />
       )}
     </div>

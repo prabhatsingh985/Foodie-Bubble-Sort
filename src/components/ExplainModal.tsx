@@ -94,6 +94,36 @@ export const ExplainModal: React.FC<ExplainModalProps> = ({ step, onClose }) => 
           {step.detailedReason}
         </div>
 
+        {/* Kid Concept Card: What is Array & Index? */}
+        <div
+          style={{
+            background: '#FEFCBF',
+            borderRadius: '16px',
+            padding: '14px 16px',
+            border: '2px dashed #F6E05E',
+            marginBottom: '16px',
+          }}
+        >
+          <div
+            style={{
+              fontFamily: "'Fredoka', cursive, sans-serif",
+              fontSize: '15px',
+              color: '#C05621',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              marginBottom: '6px',
+            }}
+          >
+            💡 Kids Computer Concept: Array & Index
+          </div>
+
+          <div style={{ fontSize: '13px', color: '#744210', lineHeight: 1.5, fontFamily: "'Outfit', sans-serif" }}>
+            <div>🍽️ <strong>Array</strong> = Poori Khane ki Line / Dining Table!</div>
+            <div>🪑 <strong>Index</strong> = Seat Number (Computer counting hamesha <code>0</code> se start karta hai: <code>0, 1, 2, 3, 4</code>)</div>
+          </div>
+        </div>
+
         {/* 3 Golden Rules Card */}
         <div
           style={{
@@ -119,8 +149,8 @@ export const ExplainModal: React.FC<ExplainModalProps> = ({ step, onClose }) => 
           </div>
 
           <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '15px', color: '#4A5568', lineHeight: 1.6 }}>
-            <li><strong>🤝 Do Haath Rule:</strong> Hum ek time par sirf 2 paas-paas waali neighbor plates check karte hain!</li>
-            <li><strong>👉 Bada Khana Right Me:</strong> Hand 1 (Left) par zyada tasty food hoga toh wo Right side slide ho jaayega!</li>
+            <li><strong>🤝 Do Haath Rule:</strong> Hum ek time par sirf 2 paas-paas waali neighbor plates (Left Hand & Right Hand) check karte hain!</li>
+            <li><strong>👉 Zyada Tasty Khana Right Me:</strong> Hand 1 (Left) par zyada tasty food hoga toh wo Right side slide ho jaayega!</li>
             <li><strong>🏆 Winner Trophy:</strong> Jab ek poore round me EK BHI plate hilani nahi padegi (matlab saare khane set hain!), tab Game WIN! 🎉</li>
           </ul>
         </div>

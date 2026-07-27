@@ -9,6 +9,11 @@ export interface FoodItem {
   isCustom?: boolean;
 }
 
+export interface DialoguePair {
+  question: string; // Left character (Rohan 👦) question
+  answer: string;   // Right character (Chef 👨‍🍳) answer
+}
+
 export interface SortStep {
   stepIndex: number;
   passNumber: number;
@@ -23,6 +28,7 @@ export interface SortStep {
   passSwapsCount: number;
   actionType: 'intro' | 'compare-swap' | 'compare-keep' | 'swapped' | 'finish';
   buttonText: string;
+  dialogues?: DialoguePair[];
 }
 
 export const PRESET_FOODS: FoodItem[] = [

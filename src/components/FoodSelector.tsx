@@ -4,10 +4,11 @@ import { PRESET_FOODS } from '../types/bubbleSort';
 import { Sparkles, Plus, Trash2, Shuffle, Play, Star } from 'lucide-react';
 
 interface FoodSelectorProps {
-  onStartSorting: (dishes: FoodItem[]) => void;
+  onStartSorting: (dishes: FoodItem[], userName: string) => void;
 }
 
 export const FoodSelector: React.FC<FoodSelectorProps> = ({ onStartSorting }) => {
+  const [userName, setUserName] = useState('Rohan');
   const [selectedDishes, setSelectedDishes] = useState<FoodItem[]>([
     PRESET_FOODS[0], // Samosa (6)
     PRESET_FOODS[1], // Chole Bhature (7)
@@ -138,6 +139,59 @@ export const FoodSelector: React.FC<FoodSelectorProps> = ({ onStartSorting }) =>
         >
           Pick your favorite dishes below, set their <strong>Tastiness Score (1-10 ⭐)</strong>, and let’s learn Bubble Sort together step-by-step!
         </p>
+      </div>
+
+      {/* Kids Personalization Name Input Card */}
+      <div
+        style={{
+          boxSizing: 'border-box',
+          width: '100%',
+          background: 'linear-gradient(135deg, #FFF5F5 0%, #FEFCBF 100%)',
+          borderRadius: '24px',
+          padding: '24px',
+          border: '3px solid #F6E05E',
+          marginBottom: '32px',
+          boxShadow: '0 10px 25px rgba(246, 224, 94, 0.35)',
+        }}
+      >
+        <label
+          htmlFor="user-name-input"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            fontFamily: "'Fredoka', cursive, sans-serif",
+            fontSize: '20px',
+            color: '#C05621',
+            marginBottom: '12px',
+          }}
+        >
+          👦 Aapka Pyaara Naam Kya Hai? (Enter Your Name):
+        </label>
+        <input
+          id="user-name-input"
+          type="text"
+          value={userName}
+          onChange={(e) => setUserName(e.target.value)}
+          placeholder="e.g. Aarav, Ananya, Rohan..."
+          maxLength={16}
+          style={{
+            boxSizing: 'border-box',
+            width: '100%',
+            padding: '14px 20px',
+            borderRadius: '16px',
+            border: '3px solid #F6AD55',
+            fontSize: '20px',
+            fontFamily: "'Fredoka', cursive, sans-serif",
+            color: '#2D3748',
+            outline: 'none',
+            background: '#FFFFFF',
+            boxShadow: '0 4px 12px rgba(246, 173, 85, 0.2)',
+          }}
+        />
+        <div style={{ fontSize: '14px', color: '#744210', marginTop: '10px', fontFamily: "'Outfit', sans-serif", fontWeight: 600 }}>
+          ✨ Master Chef party me aapko aapke naam se bulayenge! 🥳
+        </div>
       </div>
 
       {/* Preset Foods Selector */}
@@ -450,7 +504,7 @@ export const FoodSelector: React.FC<FoodSelectorProps> = ({ onStartSorting }) =>
       {/* Start Button */}
       <div style={{ textAlign: 'center' }}>
         <button
-          onClick={() => onStartSorting(selectedDishes)}
+          onClick={() => onStartSorting(selectedDishes, userName.trim() || 'Rohan')}
           style={{
             background: 'linear-gradient(135deg, #48BB78 0%, #38A169 100%)',
             color: '#FFF',
